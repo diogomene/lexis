@@ -8,18 +8,21 @@ from util.file_manager import save_json_file
 
 BASE_URL = "https://gutendex.com"
 
-def get_catalog(mime_type="text", languages=["en"]):
+def get_catalog(mime_type="text", languages=["en"], max_requests=20):
     url = f"{BASE_URL}/books?mime_type={mime_type}&languages={','.join(languages)}"
     catalog = []
-    while True:
+    request_count = 0
+
+    while url and request_count < max_requests:
         try:
             res = getFromUrl(url)
             catalog.extend(res["results"])
             url = res["next"]
+            request_count += 1
+            print('terminou a requisição de número ' + str(request_count))
         except (KeyError, requests.HTTPError):
             break
-        if not url:
-            break
+
     return catalog
 
 def download_catalog():

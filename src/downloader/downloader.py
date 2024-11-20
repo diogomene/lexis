@@ -1,3 +1,3 @@
 from catalog.downloader_catalog import download_catalog
 
-download_catalog(font="poetrydb")
+download_catalog(font="gutenberg")
