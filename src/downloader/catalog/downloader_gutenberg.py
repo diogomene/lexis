@@ -8,7 +8,7 @@ from util.file_manager import save_json_file
 
 BASE_URL = "https://gutendex.com"
 
-def get_catalog(mime_type="application/pdf", languages=["en"]):
+def get_catalog(mime_type="text", languages=["en"]):
     url = f"{BASE_URL}/books?mime_type={mime_type}&languages={','.join(languages)}"
     catalog = []
     while True:
