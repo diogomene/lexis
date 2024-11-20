@@ -5,21 +5,24 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from util.http_requester import getFromUrl
 from util.file_manager import save_json_file
+from util.filter_humor_fiction import validate_json_rules
 
 BASE_URL = "https://gutendex.com"
 
-def get_catalog(mime_type="text", languages=["en"], max_requests=20):
+def get_catalog(mime_type="text", languages=["en"], max_requests=1):
     url = f"{BASE_URL}/books?mime_type={mime_type}&languages={','.join(languages)}"
     catalog = []
     request_count = 0
+    book_count = 0
 
-    while url and request_count < max_requests:
+    # while url and request_count < max_requests and book_count < 2000:
+    while url and book_count < 2000:
         try:
             res = getFromUrl(url)
-            catalog.extend(res["results"])
+            validate_json_rules(res)
             url = res["next"]
-            request_count += 1
-            print('terminou a requisição de número ' + str(request_count))
+            # request_count += 1
+            book_count += len(res["results"])
         except (KeyError, requests.HTTPError):
             break
 
