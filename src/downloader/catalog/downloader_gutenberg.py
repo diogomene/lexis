@@ -1,44 +1,45 @@
 import requests
 import os
-import sys
-import json
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from util.http_requester import getFromUrl
-from util.file_manager import save_json_file
-from util.filter_humor_fiction import filtrar_livros
+from util.file_manager import save_json_file, save_text_file
+from util.filter_philosophy_fiction import filtrar_livros
 
 BASE_URL = "https://gutendex.com"
+BOOKS_MINIMUN = 100
 
 def get_catalog(mime_type="text", languages=["en"]):
     url = f"{BASE_URL}/books?mime_type={mime_type}&languages={','.join(languages)}"
     catalog = []
-    book_count = 0
+    book_count = {
+        "philosophy": 0,
+        "fiction": 0
+    }
 
-    while url and book_count < 20:
+    while url and (book_count["philosophy"] < BOOKS_MINIMUN or book_count["fiction"] < BOOKS_MINIMUN):
         try:
             res = getFromUrl(url)
 
             # Filtrando para considerar apenas livros do tipo "Fiction" ou "Philosophy".
             # O terceiro tipo (Poetry) já está sendo incluso pelo "poetrydb_catalog"
-            livros_filtrados = filtrar_livros(res.get("results", []))
+            livros_filtrados = filtrar_livros(res.get("results", []), book_count, BOOKS_MINIMUN)
             catalog.extend(livros_filtrados)
-
+            print("===REQUEST===")
+            print(book_count)
+            print("=============")
             url = res["next"]
-            book_count += len(res["results"])
         except (KeyError, requests.HTTPError):
             break
 
     return catalog
 
 def get_books(catalog):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    output_path = os.path.abspath(os.path.join(current_dir, "../../../data/catalog/books_gutenberg.json"))
 
     new_books = []
     next_id = 1
 
     for book in catalog:
+        print(book.get("validated_subject"))
         formats = book.get("formats", {})
         text_plain_link = formats.get("text/plain; charset=us-ascii")
 
@@ -51,7 +52,8 @@ def get_books(catalog):
             content = response.text
 
             new_book = {
-                "id": next_id,
+                "title": book.get("title"),
+                "subject": book.get("validated_subject"),
                 "content": content
             }
             new_books.append(new_book)
@@ -60,10 +62,11 @@ def get_books(catalog):
         except requests.RequestException as e:
             print(f"Erro ao acessar o link {text_plain_link}: {e}")
             continue
-
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as file:
-        json.dump(new_books, file, indent=4, ensure_ascii=False)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    for book in new_books:
+        book_file_name = ''.join(e for e in book.get("title").lower() if e.isalnum())[:35]
+        output_path = os.path.abspath(os.path.join(current_dir, f"../../../data/books/{book.get('subject')}/{book_file_name}.txt"))
+        save_text_file(book.get("content"), output_path)
 
 def download_catalog():
     catalog = get_catalog()
