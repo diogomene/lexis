@@ -1,24 +1,18 @@
-def validate_json_list(data_list):
-    if not isinstance(data_list, list):
-        raise ValueError("A entrada deve ser uma lista.")
+def filtrar_livros(lista_json):
+    def validar_livro(livro):
+        subjects = livro.get("subjects", [])
 
-    def validate_item(data):
-        subjects = data.get("subjects", [])
-
-        if not isinstance(subjects, list):
+        if any("Poetry" in subject for subject in subjects):
             return False
 
-        contains_poetry = "Poetry" in subjects
-        contains_fiction = "Fiction" in subjects
-        contains_philosophy = "Philosophy" in subjects
+        has_fiction = any("Fiction" in subject for subject in subjects)
+        has_philosophy = any("Philosophy" in subject for subject in subjects)
 
-        if contains_poetry:
+        if has_fiction and has_philosophy:
             return False
-        if not (contains_fiction or contains_philosophy):
-            return False
-        if contains_fiction and contains_philosophy:
+        if not (has_fiction or has_philosophy):
             return False
 
         return True
-    
-    return [validate_item(item) for item in data_list]
+
+    return [livro for livro in lista_json if validar_livro(livro)]
