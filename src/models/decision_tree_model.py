@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import StratifiedKFold, cross_validate, GridSearchCV
 from sklearn.metrics import make_scorer, accuracy_score, f1_score
-from data_preparator import get_formated_data
+from models.data_preparator import get_formated_data
 
 
 def run(X, classes):

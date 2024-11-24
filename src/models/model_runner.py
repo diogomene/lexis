@@ -1,10 +1,10 @@
 from typing import Literal
-from decision_tree_model import run as run_decision_tree_model
-from knn_model import run as run_knn_model
-from logistic_regression_model import run as run_logistic_regression_model
-from naive_bayes_model import run as run_naive_bayes_model
-from neural_mlp_model import run as run_mlp_model
-from data_preparator import get_formated_data
+from models.decision_tree_model import run as run_decision_tree_model
+from models.knn_model import run as run_knn_model
+from models.logistic_regression_model import run as run_logistic_regression_model
+from models.naive_bayes_model import run as run_naive_bayes_model
+from models.neural_mlp_model import run as run_mlp_model
+from models.data_preparator import get_formated_data
 MODELS_LITERALS = Literal["decision_tree", "knn", "logistic_regression", "naive_bayes", "mlp", "all"]
 
 def run_model(model: MODELS_LITERALS) -> None:

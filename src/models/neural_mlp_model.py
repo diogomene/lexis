@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import make_scorer, accuracy_score, f1_score
-from data_preparator import get_formated_data
+from models.data_preparator import get_formated_data
 
 def run(X, classes):
     print("Início de treino de Rede Neural MLP")
