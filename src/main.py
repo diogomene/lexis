@@ -1,2 +1,2 @@
 from models.model_runner import run_model
-run_model('all')
+run_model('mlp')

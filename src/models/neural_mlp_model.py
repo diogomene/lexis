@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
+from sklearn.model_selection import StratifiedKFold, cross_validate, GridSearchCV
 from sklearn.metrics import make_scorer, accuracy_score, f1_score
 from models.data_preparator import get_formated_data
 
@@ -9,12 +9,13 @@ def run(X, classes):
 
     # Definir os hiperparâmetros a serem testados
     param_grid = {
-        'hidden_layer_sizes': [(100,), (50, 50)],
-        'activation': ['relu', 'tanh']
+        'hidden_layer_sizes': [(100,)],
+        'solver': ['lbfgs'], #de acordo com a doc do scikit, é melhor pra poucos dados :)
+        'activation': ['relu', 'tanh'] #[f(x) = tanh(x).,f(x) = max(0, x)]
     }
 
     # Inicializar o classificador MLP
-    clf = MLPClassifier(max_iter=300)
+    clf = MLPClassifier(max_iter=200)
 
     # Otimização de hiperparâmetros com GridSearchCV
     grid_search = GridSearchCV(clf, param_grid, cv=StratifiedKFold(n_splits=10))
@@ -34,8 +35,8 @@ def run(X, classes):
 
 
     # Avaliação com cross_val_score
-    cv_results = cross_val_score(
-        best_model, X, classes, cv=StratifiedKFold(n_splits=10), scoring=scoring, n_jobs=-1
+    cv_results = cross_validate(
+        best_model, X, classes, cv=StratifiedKFold(n_splits=10), scoring=scoring
     )
     print("\tfim de avaliação de modelo (kFold de 10)")
 

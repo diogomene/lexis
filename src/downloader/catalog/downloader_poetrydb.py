@@ -23,8 +23,8 @@ def get_books(catalog):
         book_file_name = ''.join(e for e in book.get("title").lower() if e.isalnum())[:35]
         output_path = os.path.abspath(os.path.join(current_dir, f"../../../data/books/poetry/{book_file_name}.txt"))
         save_text_file('\n'.join(book.get("lines")), output_path)
-def download_catalog():
-    catalog = get_catalog(100)
+def download_catalog(books_count:int):
+    catalog = get_catalog(books_count)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     catalog_path = os.path.join(current_dir, "../../../data/catalog/poetrydb_catalog.json")
     catalog_path = os.path.abspath(catalog_path)

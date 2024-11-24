@@ -27,5 +27,3 @@ def run_model(model: MODELS_LITERALS) -> None:
         run_mlp_model(X, classes)
     else:
         raise ValueError("Fonte de catalogo invalida")
-
-run_model("knn")
