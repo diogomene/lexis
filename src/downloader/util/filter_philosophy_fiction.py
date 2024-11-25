@@ -1,4 +1,7 @@
+# Função para filtrar livros com base em critérios específicos.
 def filtrar_livros(lista_json, subject_counter, books_minimum):
+
+    # Função interna que valida se um livro atende aos critérios de seleção.
     def validar_livro(livro):
         subjects = livro.get("subjects", [])
 
